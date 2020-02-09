@@ -1,0 +1,382 @@
+
+This file is for test cases I come up with for my shells.
+For step 1, to show "program failed" cases, I use ./basic (which is especially for step1) instead of ffosh.
+For the rest steps, I use ffosh.
+
+***************** step 1 **************************
+
+1. normal command without arguments
+ffosh$ ls
+'#testcases.txt#'   README     basic		  ffosh     'my song'	    print       printenv       shell.cpp   sleep       testcases.txt
+ Makefile	    advanced   commandShell.txt   improved   numerics.txt   print.cpp   printenv.cpp   shell.h	   sleep.cpp   testcases.txt~
+Program was successful
+
+2. command with single argument
+ffosh$ ls -a
+'#testcases.txt#'   ..	       README	  commandShell.txt  'my song'	    print.cpp	   shell.cpp   sleep.cpp
+ .		    .honor     advanced   ffosh		     numerics.txt   printenv	   shell.h     testcases.txt
+ .#testcases.txt    Makefile   basic	  improved	     print	    printenv.cpp   sleep       testcases.txt~
+Program was successful
+
+3. commands with more arguments (./print is to print the arguments)
+ffosh$ ./print abc eft fdi
+abc
+eft
+fdi
+Program was successful
+
+4. test EOF (input Ctrl-D)
+ffosh$ mw434@ece551:~/ece551/mp_miniproject$ 
+(The ffosh exits)
+
+5. Program failed
+ffosh$ hi your name please?
+sh: 1: hi: not found
+Program failed with code 127
+(sh:1:hi:not found is error message printed by system function)
+
+6. Program terminated (./sleep contains sleep(300) inside. type in Ctrl-C to terminate it) 
+ffosh$ ./sleep
+^CTerminated by signal 11
+
+7. test exit
+ffosh$ exit
+mw434@ece551:~/ece551/mp_miniproject$
+(The ffosh exits)
+
+8. input /n
+ffosh$
+ffosh$
+(Nothing changed)
+
+***************** step 2 **************************
+
+1. normal command from env
+ffosh:/home/mw434/ece551/mp_miniproject $ echo a
+a
+Program was successful
+
+2. normal command with correct path
+ffosh:/home/mw434/ece551/mp_miniproject $ /bin/ls
+ Makefile   b.txt   both.cpp    commandShell.txt   hello.txt   message.txt    out.txt	 print.cpp      redirect        shell.cpp   sleep.cpp
+ README     basic   both.cpp~   error.txt	   improved   'my song'       out.txt2	 printenv       redirect.cpp    shell.h     testcases.txt
+ advanced   both    c.txt       ffosh		   in.txt      numerics.txt   print	 printenv.cpp   redirect.cpp~   sleep	    testcases.txt~
+Program was successful
+
+3. test whether the output is the same as 2
+ffosh:/home/mw434/ece551/mp_miniproject $ ls
+ Makefile   b.txt   both.cpp    commandShell.txt   hello.txt   message.txt    out.txt	 print.cpp      redirect        shell.cpp   sleep.cpp
+ README     basic   both.cpp~   error.txt	   improved   'my song'       out.txt2	 printenv       redirect.cpp    shell.h     testcases.txt
+ advanced   both    c.txt       ffosh		   in.txt      numerics.txt   print	 printenv.cpp   redirect.cpp~   sleep	    testcases.txt~
+Program was successful
+(The same as 2)
+
+3. normal command with wrong path
+ffosh:/home/mw434/ece551/mp_miniproject $ /bin/env
+Command /bin/env not found
+
+4. wrong command
+ffosh:/home/mw434/ece551/mp_miniproject $ ./abc
+Command ./abc not found
+
+5. print the arguments (./print is to print all the argv it takes)
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print a b c
+a
+b
+c
+Program was successful
+
+6. escape spaces
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print      ab  cd    
+ab
+cd
+Program was successful
+
+7. correct quatation marks
+ffosh:/home/mw434/ece551/mp_miniproject $        ./print ab cd "hhhh  xixi" c
+ab
+cd
+hhhh  xixi
+c
+Program was successful
+
+8. correct quatation marks, with \" and \\ together
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print "\"hello world \" "  "a\\b\\c  d\\"
+"hello world " 
+a\b\c  d\
+Program was successful
+
+9. don't get confused with " and \"
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print \\"
+Quatations don't match
+
+10. take \\\" as \\ and \", instead of \\\ and "
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print \\\"
+\"
+Program was successful
+
+11. match " with " instead of \"
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print \" "a"
+"
+a
+Program was successful
+
+12. Don't replace \" first
+ffosh:/home/mw434/ece551/mp_miniproject $ \"ls"
+Command \"ls" not found
+(instead of command "ls" not found)
+
+13. No such command in env
+ffosh:/home/mw434/ece551/mp_miniproject $ hi
+Command hi not found
+
+14. take care of escape sign before "
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print \\\\"
+Quatations don't match
+
+15. same as 14
+ffosh:/home/mw434/ece551/mp_miniproject $ ./print \\\\\"
+\\"
+Program was successful
+
+16. input \n
+ffosh:/home/mw434/ece551/mp_miniproject $
+ffosh:/home/mw434/ece551/mp_miniproject $
+(Nothing changed)
+
+***************** step 3 **************************
+
+1. test cd
+ffosh:/home/mw434/ece551/mp_miniproject $ cd
+ffosh:/home/mw434 $ cd ece551
+ffosh:/home/mw434/ece551 $ cd 
+ffosh:/home/mw434 $ cd ~
+ffosh:/home/mw434 $ cd~
+Command cd~ not found
+ffosh:/home/mw434 $ cd ..
+ffosh:/home $ cd /mw434/ece551/mp_miniproject
+Cannot change dir
+ffosh:/home $ cd ./mw434/ece551/mp_miniproject
+ffosh:/home/mw434/ece551/mp_miniproject $ cd "my song"
+ffosh:/home/mw434/ece551/mp_miniproject/my song $ cd ..
+ffosh:/home/mw434/ece551/mp_miniproject $ cd /bin /home  
+Too much arguments
+ffosh:/home/mw434/ece551/mp_miniproject $ cd /    
+ffosh:/ $ 
+
+cd with no argument
+cd with space as a single argument
+cd with argument ~
+cd~ should be command not found
+cd .. should change to the upper directory
+cd + path, wrong path, cannot change
+cd + path, correct path, go for it
+cd can also take "" as command, get rid of " but combine what inside as a single directory.
+cd cannot take more than one arguments
+cd /
+
+2. set var name
+ffosh:/home/mw434/ece551/mp_miniproject $ set dog beau
+
+3. test trying to replace var seeing $
+ffosh:/home/mw434/ece551/mp_miniproject $ echo $dog
+beau
+Program was successful
+
+4. If no var matched, don't change as the command shell we use
+ffosh:/home/mw434/ece551/mp_miniproject $ echo $hhh
+$hhh
+Program was successful
+
+5. case sensitive
+ffosh:/home/mw434/ece551/mp_miniproject $ set Dog qian
+ffosh:/home/mw434/ece551/mp_miniproject $ echo $Dog
+qian
+Program was successful
+
+6. valid var name
+ffosh:/home/mw434/ece551/mp_miniproject $ set 2*a hi
+Invalid var
+
+7. can use _ in var
+ffosh:/home/mw434/ece551/mp_miniproject $ set a_a 567
+
+8. change $var and execute it
+ffosh:/home/mw434/ece551/mp_miniproject $ set a l
+ffosh:/home/mw434/ece551/mp_miniproject $ $as
+'#testcases.txt#'   b.txt      both.cpp~	  ffosh       message.txt    out.txt2	 printenv.cpp	 shell.cpp   testcases.txt
+ Makefile	    basic      c.txt		  hello.txt  'my song'	     print	 redirect	 shell.h     testcases.txt~
+ README		    both       commandShell.txt   improved    numerics.txt   print.cpp	 redirect.cpp	 sleep
+ advanced	    both.cpp   error.txt	  in.txt      out.txt	     printenv	 redirect.cpp~	 sleep.cpp
+Program was successful
+
+9. No var
+ffosh:/home/mw434/ece551/mp_miniproject $ set
+No var in set command
+
+10. No name
+ffosh:/home/mw434/ece551/mp_miniproject $ set var
+No name for var in set command
+
+11. export to use in other program
+ffosh:/home/mw434/ece551/mp_miniproject $ export dog
+ffosh:/home/mw434/ece551/mp_miniproject $ ./printenv stdin var and stdout name
+(type in from stdin)dog
+(this is the output from ./printenv)beau
+Program was successful
+
+12. no var
+ffosh:/home/mw434/ece551/mp_miniproject $ export 
+No var in export command
+
+13. don't find the var in local environment variables
+ffosh:/home/mw434/ece551/mp_miniproject $ export 2h
+Didn't find the var
+
+14. rev with no var
+ffosh:/home/mw434/ece551/mp_miniproject $ rev
+No var in rev command
+
+15. var not found
+ffosh:/home/mw434/ece551/mp_miniproject $ rev abc
+Didn't find the var
+
+16. correct rev
+ffosh:/home/mw434/ece551/mp_miniproject $ rev dog
+ffosh:/home/mw434/ece551/mp_miniproject $ echo $dog
+uaeb
+Program was successful
+
+17. when rev, both check local environment and the overall environment
+ffosh:/home/mw434/ece551/mp_miniproject $ ./printenv
+dog
+uaeb
+Program was successful
+
+18. other program don't search in local environment
+ffosh:/home/mw434/ece551/mp_miniproject $ set cat miao
+ffosh:/home/mw434/ece551/mp_miniproject $ ./printenv (when no var matched, return NULL)
+cat 
+Program was successful
+
+19. but when export, other program notices it.
+ffosh:/home/mw434/ece551/mp_miniproject $ export cat
+ffosh:/home/mw434/ece551/mp_miniproject $ ./printenv
+cat  (typein)
+miao  (output)
+Program was successful
+
+20. change ECE551PATH
+ffosh:/home/mw434/ece551/mp_miniproject $ set ECE551PATH /bin
+ffosh:/home/mw434/ece551/mp_miniproject $ echo $ECE551PATH
+/bin
+Program was successful
+
+21. No change in overall environment yet
+ffosh:/home/mw434/ece551/mp_miniproject $ ./printenv
+ECE551PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+Program was successful
+
+22. but change the env to search for commands immediately
+ffosh:/home/mw434/ece551/mp_miniproject $ env   
+Command env not found
+ffosh:/home/mw434/ece551/mp_miniproject $
+
+23. export twice
+ffosh:/home/mw434/ece551/mp_miniproject $ export dog
+ffosh:/home/mw434/ece551/mp_miniproject $ export dog
+ffosh:/home/mw434/ece551/mp_miniproject $ echo $dog
+uaeb
+Program was successful
+
+***************** step 4 **************************
+
+1. < redirection, invalid file
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect <b.txt
+Couldn't read the file b.txt
+test1
+The stdout should be test1
+This is the error message
+Program was successful
+
+note:
+The b.txt is a protected file, cannot read or write
+ffosh:/home/mw434/ece551/mp_miniproject $ cat b.txt
+cat: b.txt: Permission denied
+Program failed with code 1
+But this file fails to be updated to the server...
+
+When failed to open file, the system is still safe, so execute it
+without redirection.
+
+./redirect takes a string and stdout "The stdout should be "<<string
+And std::cerr<<This is the error message.
+
+2. test > redirection
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect >output.txt
+test2
+This is the error message
+Program was successful
+ffosh:/home/mw434/ece551/mp_miniproject $ cat output.txt
+The stdout should be test2
+Program was successful
+
+note: No output.txt, the program will create it.
+
+3. test 2> redirection
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect 2>error.txt
+test3
+The stdout should be test3
+Program was successful
+ffosh:/home/mw434/ece551/mp_miniproject $ cat error.txt
+This is the error message
+Program was successful
+
+4. can also do it without space, as a real command shell
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect<in.txt
+The stdout should be in
+This is the error message
+Program was successful
+
+5. combination with three kinds of redirection
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect>output.txt 2>error.txt<in.txt
+Program was successful
+
+6. cannot redirection twice
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect >a.txt >c.txt
+Invalid redirection!
+
+7. with more than one arguments, ignore the rest.
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect >a.txt c.txt
+hhh
+This is the error message
+Program was successful
+ffosh:/home/mw434/ece551/mp_miniproject $ cat a.txt
+The stdout should be hhh
+Program was successful
+
+8. But > and 2> should not take as twice >
+ffosh:/home/mw434/ece551/mp_miniproject $ ./redirect >output.txt 2>error.txt
+test4
+Program was successful
+
+9. Can also combine it with program taking arguments
+ffosh:/home/mw434/ece551/mp_miniproject $ ./both a "b   c" \\\" <in.txt >output.txt 2>error.txt
+Program was successful
+ffosh:/home/mw434/ece551/mp_miniproject $ cat output.txt 
+This is #4 argv a
+This is #4 argv b   c
+This is #4 argv \"
+Here prints the string read from stdin in
+Program was successful
+ffosh:/home/mw434/ece551/mp_miniproject $ cat error.txt
+Here is the error message of ./both
+Program was successful
+
+note: ./both takes the arguments, and stdout it as "This is the #num argv "<<argument;
+and also takes one string from stdin, and stdout it as
+"Here prints the string read from stdin "<<string;
+And also std::cerr"Here is the error message from ./both";
+
+***************** the end **************************

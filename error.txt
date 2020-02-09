@@ -1,0 +1,1 @@
+Here is the error message of ./both

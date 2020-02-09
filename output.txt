@@ -1,0 +1,4 @@
+This is #4 argv a
+This is #4 argv b   c
+This is #4 argv \"
+Here prints the string read from stdin in
